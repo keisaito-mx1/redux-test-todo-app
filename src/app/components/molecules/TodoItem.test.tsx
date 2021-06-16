@@ -12,6 +12,7 @@ it('TodoItem コンポーネントが描画されていること', () => {
     completed: true,
     createdAt: Date.now(),
   };
-  render(<TodoItem item={todo} />);
+  const mockFn = jest.fn();
+  render(<TodoItem item={todo} updateDispatch={mockFn} />);
   expect(TodoItem).toBeTruthy();
 });
