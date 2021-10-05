@@ -6,4 +6,4 @@ export const AppInitialState: AppState = {
   isLoading: false,
 };
 
-export const AppActionName = 'App';
+export const AppActionName = "App";

@@ -1,8 +1,10 @@
-import { RootState } from '../../store';
-import { todosAdapter } from '../Api/ApiSlice';
+import { createSelector } from "@reduxjs/toolkit";
+import { ApiTodoEntitiySelector } from "../ApiTodo/ApiTodoSelector";
+import { PageTodoListState } from "./PageTodoListState";
 
-const PageTodoListSelector = todosAdapter.getSelectors<RootState>(
-  (state) => state.Api
+const PageTodoListSelector = createSelector(
+  [ApiTodoEntitiySelector.selectAll],
+  (todos): PageTodoListState => ({ todos })
 );
 
 export default PageTodoListSelector;

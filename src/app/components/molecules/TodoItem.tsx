@@ -1,18 +1,21 @@
-import styled from '@emotion/styled';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import React, { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { Todo } from '../../types/tods';
-import Button from '../atoms/Buttons';
-import CheckBox from '../atoms/CheckBox';
-import Input from '../atoms/Input';
+import styled from "@emotion/styled";
+import { TextField } from "@material-ui/core";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm, UseFormWatch } from "react-hook-form";
+import { updateTodoAction } from "../../feature/ApiTodo/ApiTodoActions";
+import ApiTodoSlice from "../../feature/ApiTodo/ApiTodoSlice";
+import { useAppDispatch } from "../../hooks";
+import { TodoEntitiy } from "../../types/tods";
+import Button from "../atoms/Buttons";
+import CheckBox from "../atoms/CheckBox";
+import Input from "../atoms/Input";
 
 type Props = {
-  item: Todo;
-  updateDispatch: (item: Todo) => void;
+  item: TodoEntitiy;
 };
 
 const PrimaryText: React.FC<{ text: string; deleted: boolean }> = ({
@@ -25,7 +28,7 @@ const PrimaryText: React.FC<{ text: string; deleted: boolean }> = ({
     },
     () =>
       deleted && {
-        textDecoration: 'line-through',
+        textDecoration: "line-through",
       }
   );
 
@@ -36,21 +39,44 @@ type InputValues = {
   completed: boolean;
   text: string;
 };
-const TodoItem: React.FC<Props> = ({ item, updateDispatch }) => {
-  const [editable, setEditable] = useState<boolean>(false);
-  const { getValues, register, control, watch } = useForm<InputValues>();
-  const watchCheckBox = watch('completed');
 
-  const save = (item: Todo) => {
-    const newTodo: Todo = {
-      id: item.id,
-      text: getValues('text'),
-      completed: getValues('completed'),
-      createdAt: item.createdAt,
+const TodoItem: React.FC<Props> = ({ item }) => {
+  const [editable, setEditable] = useState<boolean>(false);
+  const { register, control, getValues, watch } = useForm<InputValues>();
+  const dispatch = useAppDispatch();
+
+  const save = () => {
+    const newValue: TodoEntitiy = {
+      ...item,
+      text: getValues("text"),
+      completed: getValues("completed"),
     };
-    updateDispatch(newTodo);
+    dispatch(updateTodoAction({ todo: newValue }));
     setEditable(false);
   };
+  // Callback version of watch.  It's your responsibility to unsubscribe when done.
+  React.useEffect(() => {
+    const subscription = watch((value, { name, type }) => {
+      if (type === "change" && name === "completed") {
+        const newValue: TodoEntitiy = {
+          ...item,
+          completed: value.completed,
+        };
+        dispatch(ApiTodoSlice.actions.updateTodo({ todo: newValue }));
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
+  watch((value, { name, type }) => {
+    if (type === "change" && name === "completed") {
+      const newValue: TodoEntitiy = {
+        ...item,
+        completed: value.completed,
+      };
+      dispatch(ApiTodoSlice.actions.updateTodo({ todo: newValue }));
+    }
+  });
 
   return (
     <ListItem dense button>
@@ -58,22 +84,23 @@ const TodoItem: React.FC<Props> = ({ item, updateDispatch }) => {
         <Controller
           name="completed"
           control={control}
-          defaultValue={false}
+          defaultValue={item.completed}
           render={({ field }) => <CheckBox field={field} />}
         />
       </ListItemIcon>
       {editable ? (
-        <Input refs={register('text')} defaultValue={item.text} type="text" />
+        <Input refs={register("text")} defaultValue={item.text} type="text" />
       ) : (
         <ListItemText
           id={item.id}
-          primary={<PrimaryText deleted={watchCheckBox} text={item.text} />}
+          primary={<PrimaryText deleted={item.completed} text={item.text} />}
         />
       )}
       <ListItemSecondaryAction>
         <Button
-          onClick={editable ? () => save(item) : () => setEditable(true)}
-          label={editable ? 'Save' : 'Edit'}
+          type="button"
+          onClick={editable ? () => save() : () => setEditable(true)}
+          label={editable ? "Save" : "Edit"}
         />
       </ListItemSecondaryAction>
     </ListItem>

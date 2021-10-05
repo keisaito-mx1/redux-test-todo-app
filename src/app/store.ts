@@ -1,18 +1,17 @@
-import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
-import { ApiSlice } from './feature/Api/ApiSlice';
-import { AppSlice } from './feature/App/AppSlice';
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import ApiAuthSlice from "./feature/ApiAuth/ApiAuthSlice";
+import ApiTodoSlice from "./feature/ApiTodo/ApiTodoSlice";
+import { AppSlice } from "./feature/App/AppSlice";
 
-export const store = configureStore({
-  reducer: {
-    Api: ApiSlice.reducer,
-    App: AppSlice.reducer,
-  },
-});
+const reducer = {
+  ApiAuth: ApiAuthSlice.reducer,
+  ApiTodo: ApiTodoSlice.reducer,
+  App: AppSlice.reducer,
+};
 
-export const getInitialStore = () =>
-  configureStore({
-    reducer: { Api: ApiSlice.reducer, App: AppSlice.reducer },
-  });
+export const store = configureStore({ reducer });
+
+export const getInitialStore = () => configureStore({ reducer });
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

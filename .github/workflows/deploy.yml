@@ -15,13 +15,11 @@ jobs:
       - name: Set Up NodeJS
         uses: actions/setup-node@v2
         with:
-         node-version: '14'
+          node-version: "14"
       - name: Install Dependencies
         run: npm install
-      - name: List
-        run: ls  
       - name: Run Test
-        run: npm run test 
+        run: npm run test
       - name: Build
         run: npm run build
       - name: Deploy to Firebase

@@ -1,7 +1,5 @@
-import firebase from 'firebase';
-import { firebaseConfig } from './firebaseConfig';
+import { getFirestore } from "firebase/firestore";
+import { app } from ".";
 
 // Initialize Cloud Firestore through Firebase
-firebase.initializeApp(firebaseConfig);
-
-export const db = firebase.firestore();
+export const db = getFirestore(app);

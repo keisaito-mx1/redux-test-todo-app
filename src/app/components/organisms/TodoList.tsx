@@ -1,24 +1,38 @@
-import List from '@material-ui/core/List';
-import { useDispatch } from 'react-redux';
-import { ApiSlice } from '../../feature/Api/ApiSlice';
-import { Todo } from '../../types/tods';
-import TodoItem from '../molecules/TodoItem';
+import styled from "@emotion/styled";
+import List from "@material-ui/core/List";
+import { useForm } from "react-hook-form";
+import {
+  useDeleteCompletedTodos,
+  useDeleteTodos,
+  useUpdateTodo,
+} from "../../feature/ApiTodo/ApiTodoOperator";
+import { TodoEntitiy } from "../../types/tods";
+import Button from "../atoms/Buttons";
+import TodoItem from "../molecules/TodoItem";
+
+const Form = styled.form();
 
 type Props = {
-  todos: Todo[];
+  todos: TodoEntitiy[];
 };
 const TodoList: React.FC<Props> = ({ todos }) => {
-  const dispatch = useDispatch();
+  const [updateState, updateTodo] = useUpdateTodo();
+  const [deleteState, deleteTodos] = useDeleteCompletedTodos();
+  const { register, handleSubmit } = useForm();
 
-  const updateDispatch = (item: Todo) =>
-    dispatch(ApiSlice.actions.updateTodo({ todo: item }));
+  const onSubmit = () => {
+    deleteTodos();
+  };
 
   return (
-    <List>
-      {todos.map((todo) => (
-        <TodoItem key={todo.id} item={todo} updateDispatch={updateDispatch} />
-      ))}
-    </List>
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <List>
+        {todos.map((todo) => (
+          <TodoItem key={todo.id} item={todo} />
+        ))}
+        <Button label="DELETE" />
+      </List>
+    </Form>
   );
 };
 

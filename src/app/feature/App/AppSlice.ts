@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppActionName, AppInitialState, AppState } from './AppState';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AppActionName, AppInitialState, AppState } from "./AppState";
 
 export const AppSlice = createSlice({
   name: AppActionName,

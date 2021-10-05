@@ -1,6 +1,8 @@
-export type Todo = {
-  id: string;
+import { Entity } from "./entity";
+
+export interface TodoEntitiy extends Entity {
   completed: boolean;
   text: string;
-  createdAt: number;
-};
+}
+
+export type Todo = Omit<TodoEntitiy, keyof Entity>;
