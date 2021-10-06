@@ -20,7 +20,7 @@ const AppPage: React.FC = () => {
   const dispatch = useDispatch();
 
   const errorText = isInvalid(methods.formState.errors)
-    ? "IDとPasswordは5文字以上の任意の半角数字です。"
+    ? "IDは5文字の半角英数字。パスワードは任意の文字です。"
     : "";
 
   const onSubmit: SubmitHandler<LoginFormValues> = async () => {
@@ -29,6 +29,7 @@ const AppPage: React.FC = () => {
   };
 
   const onError: SubmitErrorHandler<LoginFormValues> = () => {
+    methods.setValue("id", "");
     methods.setValue("password", "");
   };
 
